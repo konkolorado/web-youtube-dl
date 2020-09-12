@@ -1,0 +1,34 @@
+import asyncio
+import logging
+import urllib
+from pathlib import Path
+
+from fastapi import APIRouter, Form, HTTPException
+from fastapi.responses import FileResponse, RedirectResponse
+
+from web_youtube_dl.app.utils import download_file, download_path
+
+logger = logging.getLogger("web-youtube-dl")
+router = APIRouter()
+
+
+@router.post(
+    "/", description="Trigger an asynchronous file download",
+)
+async def download(url: str = Form(...)):
+    if not url:
+        return RedirectResponse(url="/")
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, download_file, url)
+
+
+@router.get("/downloads/{filename}", description="Download a file by its filename")
+async def retrieve(filename: str):
+    filename = urllib.parse.unquote(filename)
+    try:
+        return FileResponse(
+            download_path() + filename, filename=filename, media_type="audio/mpeg",
+        )
+    except FileNotFoundError as e:
+        logger.exception(f"Unable to send file: {e}")
+        raise HTTPException(status_code=404, detail="Item not found")

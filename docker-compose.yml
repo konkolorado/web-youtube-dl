@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+
+  web-youtube-dl:
+    image: web-youtube-dl:latest
+    ports:
+      - target: "8000"
+        published: "8000"
