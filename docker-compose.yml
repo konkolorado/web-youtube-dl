@@ -4,5 +4,5 @@ services:
   web-youtube-dl:
     image: web-youtube-dl:latest
     ports:
-      - target: "8000"
-        published: "8000"
+      - target: "5000"
+        published: "5000"
