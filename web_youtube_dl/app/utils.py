@@ -1,4 +1,3 @@
-import functools
 import logging
 import os
 from pathlib import Path
@@ -6,12 +5,15 @@ from typing import Any, Dict, List
 
 import janus
 import youtube_dl
+from cachetools import Cache, cached
 from fastapi import WebSocket
 
 import web_youtube_dl
 
 logger = logging.getLogger("web-youtube-dl")
 queues: Dict[str, janus.Queue] = {}
+QUEUE_SENTINAL = None
+dl_cache = Cache(maxsize=1000)
 
 
 def app_root_path():
@@ -29,7 +31,7 @@ def download_path() -> str:
     return output_path
 
 
-@functools.lru_cache(maxsize=None)
+@cached(dl_cache)
 def download_file(url: str) -> str:
     ydl_opts = download_opts()
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -64,7 +66,26 @@ def _download_status_hook(resp: Dict[str, Any]):
         song_title = extract_video_title(filename=resp["filename"])
         downloaded_percent = (resp["downloaded_bytes"] * 100) / resp["total_bytes"]
         downloaded_percent = round(downloaded_percent)
-        queues[song_title].sync_q.put(downloaded_percent)
+
+        try:
+            queues[song_title].sync_q.put(downloaded_percent)
+        except KeyError:
+            # It's possible that when the thread starts running, the
+            # websocket connection hasnt yet created a queues entry for
+            # the song_title in question. Just pass and maybe for the next
+            # download status it'll have been created
+            logger.error(
+                f"Unable to retrieve queue for {song_title} to send {downloaded_percent}"
+            )
+
+    if resp["status"] == "finished":
+        song_title = extract_video_title(filename=resp["filename"])
+        try:
+            queues[song_title].sync_q.put(QUEUE_SENTINAL)
+        except KeyError:
+            logger.error(
+                f"Unable to retrieve queue for {song_title} to send {QUEUE_SENTINAL}"
+            )
 
 
 def filename_for_url(url: str) -> str:
@@ -80,30 +101,8 @@ def extract_video_title(*, filename: str) -> str:
     return Path(filename).stem
 
 
-class ConnectionManager:
-    def __init__(self):
-        self.subscriptions: Dict[str, List[WebSocket]] = {}
+def cli_download():
+    import sys
 
-    async def receive_and_subscribe(self, websocket: WebSocket):
-        download_url = await websocket.receive_text()
-        filename = filename_for_url(download_url)
-        song_title = extract_video_title(filename=filename)
-
-        self.subscribe(song_title, websocket)
-        return song_title
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-
-    def unsubscribe(self, channel: str, websocket: WebSocket):
-        self.subscriptions[channel].remove(websocket)
-
-    async def broadcast(self, channel: str, message: str):
-        connections = self.subscriptions[channel]
-        for c in connections:
-            await c.send_text(f"{message}")
-
-    def subscribe(self, channel: str, websocket: WebSocket):
-        if channel not in self.subscriptions:
-            self.subscriptions[channel] = []
-        self.subscriptions[channel].append(websocket)
+    url = sys.argv[1]
+    download_file(url)
