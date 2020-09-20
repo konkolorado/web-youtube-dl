@@ -11,5 +11,6 @@ RUN poetry install
 
 ADD web_youtube_dl /app/web_youtube_dl
 
+USER 1001
 CMD ["uvicorn", "web_youtube_dl.app.main:app", \
     "--host", "0.0.0.0", "--port", "5000", "--log-level", "debug"]
