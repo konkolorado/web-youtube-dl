@@ -58,6 +58,7 @@ def download_opts() -> Dict[str, Any]:
         ],
         "progress_hooks": [_download_status_hook],
         "noprogress": True,
+        "cachedir": f"{module_root_path()}/.cache",
     }
 
 

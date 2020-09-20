@@ -10,6 +10,7 @@ ADD pyproject.toml /app
 RUN poetry install
 
 ADD web_youtube_dl /app/web_youtube_dl
+RUN chown 1001 /app/web_youtube_dl
 
 USER 1001
 CMD ["uvicorn", "web_youtube_dl.app.main:app", \
