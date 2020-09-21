@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Tuple
 
 import janus
@@ -6,10 +7,12 @@ from fastapi import WebSocket
 
 from web_youtube_dl.app.utils import (
     dl_cache,
-    extract_video_title,
-    filename_for_url,
+    filename_to_song_title,
     queues,
+    url_to_filename,
 )
+
+logger = logging.getLogger("web-youtube-dl")
 
 
 class ConnectionManager:
@@ -22,6 +25,7 @@ class ConnectionManager:
         await websocket.accept()
 
     async def subscribe(self, websocket: WebSocket) -> Tuple[bool, str]:
+        await self.connect(websocket)
         download_url = await websocket.receive_text()
 
         if dl_cache.get((download_url,), None) is not None:
@@ -31,13 +35,12 @@ class ConnectionManager:
             return False, ""
 
         try:
-            filename = filename_for_url(download_url)
+            song_title = url_to_filename(download_url)
         except youtube_dl.utils.DownloadError:
             # If the URL is not something youtube-dl can download,
             # there's no need to subscribe to monitor download progress
             return False, ""
 
-        song_title = extract_video_title(filename=filename)
         if song_title not in self.subscriptions:
             self.subscriptions[song_title] = []
         self.subscriptions[song_title].append(websocket)
@@ -46,6 +49,7 @@ class ConnectionManager:
             self.progress_queues[song_title] = janus.Queue()
 
         self.subscribers += 1
+        logger.info(f"Client subscribed to {song_title}")
         return True, song_title
 
     async def unsubscribe(self, song_title: str):
