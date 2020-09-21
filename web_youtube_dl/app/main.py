@@ -5,7 +5,6 @@ from fastapi import FastAPI
 from uvicorn.logging import DefaultFormatter
 
 from web_youtube_dl.app import api, views
-from web_youtube_dl.app.utils import download_file
 
 logger = logging.getLogger("web-youtube-dl")
 

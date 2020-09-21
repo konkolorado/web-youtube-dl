@@ -16,18 +16,14 @@ QUEUE_SENTINAL = None
 dl_cache = Cache(maxsize=1000)
 
 
-def app_root_path():
-    return Path(__file__).absolute().parent
-
-
-def module_root_path():
-    return Path(web_youtube_dl.__file__).absolute().parent
+app_root_path = Path(__file__).absolute().parent
+module_root_path = Path(web_youtube_dl.__file__).absolute().parent
 
 
 def download_path() -> str:
     output_path = os.environ.get("YT_DOWNLOAD_PATH")
     if output_path is None:
-        output_path = f"{module_root_path()}/downloads/"
+        output_path = f"{module_root_path}/downloads/"
     return output_path
 
 
@@ -40,7 +36,7 @@ def download_file(url: str) -> str:
         except (youtube_dl.utils.DownloadError, FileNotFoundError) as e:
             logger.exception(f"Error downloading file: {e}", exc_info=False)
 
-        return filename_for_url(url)
+        return url_to_filename(url)
 
 
 def download_opts() -> Dict[str, Any]:
@@ -48,7 +44,7 @@ def download_opts() -> Dict[str, Any]:
         "format": "bestaudio/best",
         "logger": logger,
         "noplaylist": True,
-        "outtmpl": f"{download_path()}/%(title)s.%(ext)s",
+        "outtmpl": f"{download_path()}/%(title)s.mp3",
         "postprocessors": [
             {
                 "key": "FFmpegExtractAudio",
@@ -58,13 +54,13 @@ def download_opts() -> Dict[str, Any]:
         ],
         "progress_hooks": [_download_status_hook],
         "noprogress": True,
-        "cachedir": f"{module_root_path()}/.cache",
+        "cachedir": f"{module_root_path}/.cache",
     }
 
 
 def _download_status_hook(resp: Dict[str, Any]):
     if resp["status"] == "downloading":
-        song_title = extract_video_title(filename=resp["filename"])
+        song_title = filename_to_song_title(filename=resp["filename"])
         downloaded_percent = (resp["downloaded_bytes"] * 100) / resp["total_bytes"]
         downloaded_percent = round(downloaded_percent)
 
@@ -80,7 +76,7 @@ def _download_status_hook(resp: Dict[str, Any]):
             )
 
     if resp["status"] == "finished":
-        song_title = extract_video_title(filename=resp["filename"])
+        song_title = filename_to_song_title(filename=resp["filename"])
         try:
             queues[song_title].sync_q.put(QUEUE_SENTINAL)
         except KeyError:
@@ -89,17 +85,16 @@ def _download_status_hook(resp: Dict[str, Any]):
             )
 
 
-def filename_for_url(url: str) -> str:
+def url_to_filename(url: str) -> str:
     ydl_opts = download_opts()
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         result: List[Dict] = ydl.extract_info(url, download=False)
         filename = ydl.prepare_filename(result)
-        filename = filename.replace(".webm", ".mp3").replace(".m4a", ".mp3")
         return Path(filename).name
 
 
-def extract_video_title(*, filename: str) -> str:
-    return Path(filename).stem
+def filename_to_song_title(filename: str) -> str:
+    return Path(filename).name
 
 
 def cli_download():
