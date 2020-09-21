@@ -6,3 +6,5 @@ services:
     ports:
       - target: "5000"
         published: "5000"
+    environment:
+      - YT_DOWNLOAD_PATH=/tmp/

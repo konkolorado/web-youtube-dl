@@ -22,5 +22,21 @@ async def setup_logging():
     logger.addHandler(handler)
 
 
+def run_app():
+    uvicorn.run(
+        "web_youtube_dl.app.main:app",
+        host="0.0.0.0",
+        port=5000,
+        log_level="debug",
+        reload=False,
+    )
+
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=5000, log_level="debug", reload=True)
+    uvicorn.run(
+        "web_youtube_dl.app.main:app",
+        host="127.0.0.1",
+        port=5000,
+        log_level="debug",
+        reload=True,
+    )

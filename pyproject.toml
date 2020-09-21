@@ -23,6 +23,7 @@ black = {version = "^19.10b0", allow-prereleases = true}
 
 [tool.poetry.scripts]
 web-youtube-dl-cli = "web_youtube_dl.app.utils:cli_download"
+web-youtube-dl = "web_youtube_dl.app.main:run_app"
 
 [build-system]
 requires = ["poetry>=0.12"]
