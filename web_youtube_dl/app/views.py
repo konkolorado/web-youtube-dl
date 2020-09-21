@@ -6,8 +6,9 @@ from fastapi import APIRouter, Request, WebSocket
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from web_youtube_dl.app.utils import QUEUE_SENTINAL, app_root_path
+from web_youtube_dl.app.utils import app_root_path
 from web_youtube_dl.app.websocket_manager import ConnectionManager
+from web_youtube_dl.app.youtube_dl_helpers import QUEUE_SENTINAL
 
 router = APIRouter()
 manager = ConnectionManager()

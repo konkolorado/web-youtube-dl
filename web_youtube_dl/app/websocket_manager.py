@@ -5,12 +5,7 @@ import janus
 import youtube_dl
 from fastapi import WebSocket
 
-from web_youtube_dl.app.utils import (
-    dl_cache,
-    filename_to_song_title,
-    queues,
-    url_to_filename,
-)
+from web_youtube_dl.app.youtube_dl_helpers import dl_cache, queues, url_to_filename
 
 logger = logging.getLogger("web-youtube-dl")
 
@@ -21,11 +16,8 @@ class ConnectionManager:
         self.subscriptions: Dict[str, List[WebSocket]] = {}
         self.progress_queues = queues
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-
     async def subscribe(self, websocket: WebSocket) -> Tuple[bool, str]:
-        await self.connect(websocket)
+        await websocket.accept()
         download_url = await websocket.receive_text()
 
         if dl_cache.get((download_url,), None) is not None:
@@ -60,9 +52,8 @@ class ConnectionManager:
             self.subscribers -= 1
 
     async def broadcast(self, song_title: str, message: str):
-        connections = self.subscriptions[song_title]
-        for c in connections:
-            await c.send_text(f"{message}")
+        for connection in self.subscriptions[song_title]:
+            await connection.send_text(f"{message}")
 
     def remove_queue(self, song_title: str):
         self.progress_queues.pop(song_title, None)

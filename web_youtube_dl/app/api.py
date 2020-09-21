@@ -6,7 +6,8 @@ from fastapi import APIRouter, Form, HTTPException
 from fastapi.responses import FileResponse
 from werkzeug.utils import secure_filename
 
-from web_youtube_dl.app.utils import download_file, download_path
+from web_youtube_dl.app.utils import download_path
+from web_youtube_dl.app.youtube_dl_helpers import download_file
 
 logger = logging.getLogger("web-youtube-dl")
 router = APIRouter()
