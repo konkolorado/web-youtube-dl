@@ -77,5 +77,5 @@ ydl_dl_opts = {
     ],
     "progress_hooks": [_download_status_hook],
     "noprogress": True,
-    "cachedir": f"{module_root_path}/.cache",
+    "cachedir": f"{download_path()}/.cache",
 }
