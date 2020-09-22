@@ -25,10 +25,3 @@ def app_port() -> int:
         return int(port)
     except ValueError:
         return 5000
-
-
-def cli_download():
-    import sys
-
-    url = sys.argv[1]
-    download_file(url)

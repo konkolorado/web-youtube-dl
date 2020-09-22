@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "web-youtube-dl"
 version = "0.1.0"
-description = ""
+description = "A web version of youtube-dl"
 authors = ["Uriel Mandujano <uriel.mandujano14@gmail.com>"]
 
 [tool.poetry.dependencies]
@@ -22,7 +22,7 @@ mypy = "^0.782"
 black = {version = "^19.10b0", allow-prereleases = true}
 
 [tool.poetry.scripts]
-web-youtube-dl-cli = "web_youtube_dl.app.utils:cli_download"
+web-youtube-dl-cli = "web_youtube_dl.app.youtube_dl_helpers:cli_download"
 web-youtube-dl = "web_youtube_dl.app.main:run_app"
 
 [build-system]

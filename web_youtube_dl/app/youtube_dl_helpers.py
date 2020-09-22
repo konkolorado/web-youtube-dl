@@ -42,7 +42,7 @@ def _download_status_hook(resp: Dict[str, Any]):
             # websocket connection hasnt yet created a queues entry for
             # the song_title in question. Just pass and maybe for the next
             # download status it'll have been created
-            logger.error(
+            logger.info(
                 f"Unable to retrieve queue for {song_title} to send {downloaded_percent}"
             )
 
@@ -51,7 +51,7 @@ def _download_status_hook(resp: Dict[str, Any]):
         try:
             queues[song_title].sync_q.put(QUEUE_SENTINAL)
         except KeyError:
-            logger.error(
+            logger.info(
                 f"Unable to retrieve queue for {song_title} to send {QUEUE_SENTINAL}"
             )
 
@@ -79,3 +79,10 @@ ydl_dl_opts = {
     "noprogress": True,
     "cachedir": f"{download_path()}/.cache",
 }
+
+
+def cli_download():
+    import sys
+
+    url = sys.argv[1]
+    download_file(url)
