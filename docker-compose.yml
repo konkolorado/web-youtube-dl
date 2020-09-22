@@ -4,7 +4,8 @@ services:
   web-youtube-dl:
     image: web-youtube-dl:latest
     ports:
-      - target: "5000"
-        published: "5000"
+      - target: "${YT_DOWNLOAD_PORT:-5000}"
+        published: "${YT_DOWNLOAD_PORT:-5000}"
     environment:
       - YT_DOWNLOAD_PATH=/tmp/
+      - YT_DOWNLOAD_PORT=${YT_DOWNLOAD_PORT:-5000}

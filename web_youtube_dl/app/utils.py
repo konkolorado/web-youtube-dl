@@ -19,6 +19,14 @@ def download_path() -> str:
     return output_path
 
 
+def app_port() -> int:
+    port: str = os.environ.get("YT_DOWNLOAD_PORT", "5000")
+    try:
+        return int(port)
+    except ValueError:
+        return 5000
+
+
 def cli_download():
     import sys
 

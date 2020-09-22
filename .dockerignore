@@ -2,3 +2,5 @@
 *.egg-info
 .vscode/
 */downloads/
+.git/
+*/__pycache__/
