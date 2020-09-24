@@ -7,6 +7,13 @@ what happens if a user hits submit multiple times??
 Need a couple of ways to detect if youtubedl will download anything
 Need to make sure requests to /download/{filename} get sanitized
 
+Installation
+============
+
+.. code-block:: bash
+
+    pip install <>
+
 
 Running
 =======
