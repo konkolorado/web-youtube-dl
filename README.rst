@@ -1,11 +1,17 @@
-TODO
-==== 
+.. image:: https://badge.fury.io/py/web-youtube-dl.svg
+    :target: https://badge.fury.io/py/web-youtube-dl
+    :alt: PyPi Package
 
-what happens if a user hits submit multiple times??
-    multiple downloads for same url results in "raise RuntimeError("Response content longer than Content-Length")"
+.. image:: https://img.shields.io/pypi/pyversions/web-youtube-dl
+    :target: https://pypi.org/project/web-youtube-dl/
+    :alt: Compatible Python Versions
 
-Need a couple of ways to detect if youtubedl will download anything
-Badges!
+
+Issues
+======
+
+Backend issues if a single user hits submit multiple times
+  - "raise RuntimeError("Response content longer than Content-Length")"
 
 Installation
 ============

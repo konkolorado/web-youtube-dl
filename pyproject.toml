@@ -1,7 +1,8 @@
 [tool.poetry]
 name = "web-youtube-dl"
-version = "0.1.0"
+version = "0.1.1"
 description = "A web version of youtube-dl"
+readme = "README.rst"
 authors = ["Uriel Mandujano <uriel.mandujano14@gmail.com>"]
 
 [tool.poetry.dependencies]
