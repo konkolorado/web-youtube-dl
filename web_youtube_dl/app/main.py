@@ -3,15 +3,16 @@ import logging
 import uvicorn
 from fastapi import FastAPI
 from uvicorn.logging import DefaultFormatter
-
 from web_youtube_dl.app import api, views
-from web_youtube_dl.app.utils import app_port
+from web_youtube_dl.app.utils import MediaStaticFiles, app_port, download_path
 
 logger = logging.getLogger("web-youtube-dl")
 
 app = FastAPI()
 app.include_router(api.router)
 app.include_router(views.router)
+
+app.mount("/download", MediaStaticFiles(directory=download_path()), name="downloads")
 
 
 @app.on_event("startup")

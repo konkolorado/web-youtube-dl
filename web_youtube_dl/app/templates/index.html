@@ -73,7 +73,7 @@
 
                 var element = document.createElement('a');
                 element.setAttribute('download', filename);
-                element.setAttribute('href', `{{ url_for('retrieve', filename='${filename}') }}`);
+                element.setAttribute('href', `{{ url_for('downloads', path='/${filename}') }}`);
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
