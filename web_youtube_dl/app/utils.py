@@ -9,7 +9,7 @@ module_root_path = Path(web_youtube_dl.__file__).absolute().parent
 
 
 def filename_to_song_title(filename: str) -> str:
-    return Path(filename).name
+    return Path(filename).with_suffix(".mp3").name
 
 
 def download_path() -> str:

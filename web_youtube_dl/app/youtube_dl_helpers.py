@@ -5,7 +5,6 @@ from typing import Any, Dict, List
 import janus
 import youtube_dl
 from cachetools import Cache, cached
-
 from web_youtube_dl.app.utils import (
     download_path,
     filename_to_song_title,
@@ -60,14 +59,14 @@ def url_to_filename(url: str) -> str:
     with youtube_dl.YoutubeDL(ydl_dl_opts) as ydl:
         result: List[Dict] = ydl.extract_info(url, download=False)
         filename = ydl.prepare_filename(result)
-        return Path(filename).name
+        return Path(filename).with_suffix(".mp3").name
 
 
 ydl_dl_opts = {
     "format": "bestaudio/best",
     "logger": logger,
     "noplaylist": True,
-    "outtmpl": f"{download_path()}/%(title)s.mp3",
+    "outtmpl": f"{download_path()}/%(title)s.%(ext)s",
     "postprocessors": [
         {
             "key": "FFmpegExtractAudio",
