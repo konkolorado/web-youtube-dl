@@ -12,9 +12,10 @@ Running
 =======
 
 CLI
+---
 
 Docker
-^^^^^^
+------
 
 This project can optionally be run and managed as a Docker container.
 
