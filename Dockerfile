@@ -1,18 +1,25 @@
-FROM python:3.7-alpine as base
+FROM python:3.8-alpine
+ENV PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    POETRY_VIRTUALENVS_CREATE=false
 
-RUN apk update && apk add --no-cache build-base libressl-dev musl-dev libffi-dev ffmpeg
-RUN pip install -U pip && pip install poetry
-
-ENV POETRY_VIRTUALENVS_CREATE=false
+RUN apk update && \
+    apk add --no-cache \
+    build-base \
+    curl \
+    ffmpeg \
+    libffi-dev \
+    libressl-dev \
+    musl-dev
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+ENV PATH="${PATH}:/root/.poetry/bin"
 
 WORKDIR /app
-ADD pyproject.toml /app
-RUN poetry install
+COPY poetry.lock pyproject.toml ./
+RUN poetry install --no-dev
 
-ADD web_youtube_dl /app/web_youtube_dl
-RUN chown 1001 /app/web_youtube_dl
-RUN poetry build && pip install dist/*.whl
+ADD --chown=1001 web_youtube_dl web_youtube_dl
+RUN poetry build --format wheel && pip install dist/*.whl
 
-FROM base as final
 USER 1001
 CMD ["/usr/local/bin/web-youtube-dl"]
