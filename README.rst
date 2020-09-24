@@ -18,7 +18,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install <>
+    pip install web-youtube-dl
 
 
 Running
