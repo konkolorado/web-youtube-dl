@@ -17,11 +17,11 @@ CLI
 Installing this project will give you access to two CLI tools, each with a separate 
 purpose:
 
-- `web-youtube-dl-cli`: Useful for simply downloading the highest possible quality 
+- web-youtube-dl-cli: Useful for simply downloading the highest possible quality 
     audio of a song. Simply provide the URL and an .mp3 will be downloaded to that 
     same directory
 
-- `web-youtube-dl`: Useful for running the web service on the local machine. It will 
+- web-youtube-dl: Useful for running the web service on the local machine. It will 
     listen to all local network connections on port 5000 (or whatever port is defined 
     in the environment variable `YT_DOWNLOAD_PORT`).
 
