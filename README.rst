@@ -7,11 +7,21 @@
     :alt: Compatible Python Versions
 
 
-Issues
-======
+About
+=====
 
-Backend issues if a single user hits submit multiple times
-  - "raise RuntimeError("Response content longer than Content-Length")"
+This is a project that builds on youtube-dl to provide a simple web-interface 
+for downloading audio from Youtube. It's primary purpose is to provide a LAN 
+HTTP accessible method of saving audio to a local device.
+
+This project is built using python's asyncio libraries and packages include 
+FastAPI, janus, and uvicorn. It's also an example of how to work with youtube-dl's 
+python sdk and enable asynchronous downloads in the context of a web-app. 
+
+Files are downloaded using an API endpoint and then retrived from the application's 
+static files directory using Javascript's fetch API. Download progress is presented 
+via a websocket connection.
+
 
 Installation
 ============
@@ -71,3 +81,15 @@ really need to be changed.
 .. code-block:: bash
 
     docker-compose up -d
+
+
+Known Issues
+============
+
+Backend issues if a single user hits submit multiple times
+  - "raise RuntimeError("Response content longer than Content-Length")"
+  - track this down
+
+Add tests & CI
+
+Should probably build in some websocket Acking during broadcast
