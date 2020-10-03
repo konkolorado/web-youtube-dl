@@ -59,7 +59,11 @@
         fetch("{{ url_for('download') }}",
             {
                 method: 'post',
-                body: formData
+                body: JSON.stringify({ "url": $('input[name=download-url]').val() }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }
             })
             .then(function (response) {
                 if (!response.ok) {
