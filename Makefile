@@ -6,6 +6,7 @@ Please use "make <target>" where <target> is one of
  test:      to run the full suite of tests
  compose:	to run the project as a Docker-compose app
  container: to build the project's containers
+ stop: 		to stop the Docker-compose app
 endef
 export HELPTEXT
 
@@ -20,3 +21,6 @@ container:
 
 compose:
 	docker-compose up -d
+
+stop:
+	docker-compose down
