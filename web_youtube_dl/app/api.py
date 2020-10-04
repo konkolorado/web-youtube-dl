@@ -13,4 +13,5 @@ router = APIRouter()
 )
 async def download(dl_req: DownloadRequest):
     loop = asyncio.get_running_loop()
-    return await loop.run_in_executor(None, download_file, dl_req.url)
+    filename = await loop.run_in_executor(None, download_file, dl_req.url)
+    return {"filename": filename}
