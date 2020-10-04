@@ -7,7 +7,6 @@ jobs:
     name: Run full testing pipeline
     runs-on: ubuntu-latest
 
-    # Missing ffmpeg
     steps:
       - name: Checkout source code
         uses: actions/checkout@v1
