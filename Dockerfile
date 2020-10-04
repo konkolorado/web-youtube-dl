@@ -15,7 +15,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 ENV PATH="${PATH}:/root/.poetry/bin"
 
 WORKDIR /app
-COPY poetry.lock pyproject.toml ./
+COPY poetry.lock pyproject.toml README.rst ./
 RUN poetry install --no-dev
 
 ADD --chown=1001 web_youtube_dl web_youtube_dl
