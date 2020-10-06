@@ -88,12 +88,11 @@ really need to be changed.
 
     docker-compose up -d
 
-  Or, using the project's Makefile
+Or, using the project's Makefile
 
 .. code-block:: bash
 
     make compose
-
 
 Known Issues
 ============
