@@ -41,9 +41,10 @@ Installing this project will give you access to two CLI tools, each with a separ
 purpose:
 
 * | **web-youtube-dl-cli**
-  | Useful for simply downloading the highest possible quality 
-  | audio of a song. Simply provide the URL and an .mp3 will be downloaded to that 
-  | same directory
+  | Useful for simply downloading the highest possible quality audio of a song. 
+  | Simply provide the URL and an .mp3 will be downloaded to the package's 
+  | download directory or to the value of the YT_DOWNLOAD_PATH environment 
+  | variable 
 
 * | **web-youtube-dl**
   |  Useful for running the web service on the local machine. It will 
