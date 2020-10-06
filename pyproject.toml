@@ -4,6 +4,12 @@ version = "0.1.4"
 description = "A web version of youtube-dl"
 readme = "README.rst"
 authors = ["Uriel Mandujano <uriel.mandujano14@gmail.com>"]
+classifiers = [
+    "Topic :: Home Automation",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: Capture/Recording",
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.7"
