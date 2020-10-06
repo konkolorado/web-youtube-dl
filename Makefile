@@ -4,9 +4,9 @@ define HELPTEXT
 Please use "make <target>" where <target> is one of
  help:      to print this message
  test:      to run the full suite of tests
- compose:	to run the project as a Docker-compose app
+ compose:   to run the project as a Docker-compose app
  container: to build the project's containers
- stop: 		to stop the Docker-compose app
+ stop:      to stop the Docker-compose app
 endef
 export HELPTEXT
 

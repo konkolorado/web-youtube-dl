@@ -41,7 +41,7 @@ Installing this project will give you access to two CLI tools, each with a separ
 purpose:
 
 * | **web-youtube-dl-cli**
-  |  Useful for simply downloading the highest possible quality 
+  | Useful for simply downloading the highest possible quality 
   | audio of a song. Simply provide the URL and an .mp3 will be downloaded to that 
   | same directory
 
@@ -63,6 +63,12 @@ Build the Docker image
 
     docker build . -t  web-youtube-dl:latest --force-rm
 
+Or, using the project's Makefile
+
+.. code-block:: bash
+
+    make container
+
 Run the service
 ^^^^^^^^^^^^^^^
 
@@ -81,6 +87,12 @@ really need to be changed.
 .. code-block:: bash
 
     docker-compose up -d
+
+  Or, using the project's Makefile
+
+.. code-block:: bash
+
+    make compose
 
 
 Known Issues
