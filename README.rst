@@ -100,4 +100,4 @@ Known Issues
 Backend issues if a single user hits submit multiple times
   - "raise RuntimeError("Response content longer than Content-Length")"
 
-Should probably build in some websocket Acking during broadcast
+Should probably build in some websocket Acking during broadcast.
