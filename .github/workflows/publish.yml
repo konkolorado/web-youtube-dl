@@ -12,7 +12,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v1
         with:
-        fetch-depth: 1
+          fetch-depth: 1
 
       - name: Set target python version
         uses: actions/setup-python@v2
