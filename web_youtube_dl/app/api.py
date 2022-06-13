@@ -1,11 +1,22 @@
 import asyncio
+import logging
 
-from fastapi import APIRouter, Form
-from fastapi.responses import FileResponse
-from web_youtube_dl.app.models import DownloadRequest, DownloadResponse
-from web_youtube_dl.app.youtube_dl_helpers import download_file
+from fastapi import APIRouter
+from pydantic import BaseModel, HttpUrl
+
+from web_youtube_dl.services import progress, youtube
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+class DownloadRequest(BaseModel):
+    url: HttpUrl
+
+
+class DownloadResponse(BaseModel):
+    filename: str
 
 
 @router.post(
@@ -13,7 +24,14 @@ router = APIRouter()
     description="Trigger an asynchronous file download",
     response_model=DownloadResponse,
 )
-async def download(dl_req: DownloadRequest):
+async def download(req: DownloadRequest):
+    logger.debug(f"Received download request {req}")
+    queues = progress.ProgressQueues()
+    ytd = youtube.YTDownload(req.url, queues)
+    queues.track(ytd.filename)
+    logger.debug(f"Tracking download for {req.url} as {ytd.filename}")
+
+    dlm = youtube.DownloadManager()
     loop = asyncio.get_running_loop()
-    filename = await loop.run_in_executor(None, download_file, dl_req.url)
-    return {"filename": filename}
+    filepath = await loop.run_in_executor(None, dlm.download, ytd)
+    return {"filename": filepath.name}

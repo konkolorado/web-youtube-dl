@@ -13,7 +13,7 @@
             <label for="download-input" class="sr-only">Youtube Link</label>
             <input type="url" class="form-control" name="download-url" placeholder="Youtube Link">
         </div>
-        <button type="submit" class="btn btn-primary mb-2">Download</button>
+        <button type="submit" id="download-button" class="btn btn-primary mb-2" onclick="this.disabled = true;">Download</button>
     </form>
 </div>
 
@@ -67,18 +67,20 @@
             })
             .then(function (response) {
                 if (!response.ok) {
+                    document.getElementById("download-button").disabled = false;
                     throw Error(response.statusText);
                 }
                 return response.json();
             }).then(function (resp) {
-                console.log(resp.filename);
                 // Stop the progress bar's animation
                 $(".progress-bar")
                     .removeClass("progress-bar-animated active")
+                // Re-enable the download button
+                document.getElementById("download-button").disabled = false;
 
                 var element = document.createElement('a');
                 element.setAttribute('download', resp.filename);
-                element.setAttribute('href', `{{ url_for('downloads', path='/${resp.filename}') }}`);
+                element.setAttribute('href', `{{ url_for('downloads', path='${resp.filename}') }}`);
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);

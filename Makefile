@@ -5,7 +5,7 @@ Please use "make <target>" where <target> is one of
  help:      to print this message
  test:      to run the full suite of tests
  compose:   to run the project as a Docker-compose app
- container: to build the project's containers
+ image: to build the project's containers
  stop:      to stop the Docker-compose app
 endef
 export HELPTEXT
@@ -16,7 +16,7 @@ help:
 test:
 	poetry run pytest --cov=web_youtube_dl
 
-container:
+image:
 	docker build . -t  web-youtube-dl:latest --force-rm
 
 compose:

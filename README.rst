@@ -10,12 +10,12 @@
 About
 =====
 
-This is a project that builds on youtube-dl to provide a simple web-interface 
+This is a project that builds on pytube to provide a simple web-interface 
 for downloading audio from Youtube. It's primary purpose is to provide a LAN 
 HTTP accessible method of saving audio to a local device.
 
 This project is built using python's asyncio libraries and packages include 
-FastAPI, janus, and uvicorn. It's also an example of how to work with youtube-dl's 
+FastAPI, janus, and uvicorn. It's also an example of how to work with pytube's 
 python sdk and enable asynchronous downloads in the context of a web-app. 
 
 Files are downloaded using an API endpoint and then retrived from the application's 
@@ -37,19 +37,18 @@ Running
 CLI
 ---
 
-Installing this project will give you access to two CLI tools, each with a separate 
-purpose:
+Installing this project will give you access to two CLI tools, each with a
+separate purpose:
 
 * | **web-youtube-dl-cli**
   | Useful for simply downloading the highest possible quality audio of a song. 
-  | Simply provide the URL and an .mp3 will be downloaded to the package's 
-  | download directory or to the value of the YT_DOWNLOAD_PATH environment 
-  | variable 
+  | Simply provide the URL and an .mp3 will be downloaded to current working
+  | directory or to the value of the *YT_DOWNLOAD_PATH* environment variable 
 
-* | **web-youtube-dl**
+* | **web-youtube-dl-web**
   |  Useful for running the web service on the local machine. It will 
-  |  listen to all local network connections on port 5000 (or whatever port is defined 
-  |  in the environment variable *YT_DOWNLOAD_PORT*).
+  |  listen to all local network connections on port 5000 (or whatever port is
+  |  defined in the environment variable *YT_DOWNLOAD_PORT*).
 
 
 Docker
@@ -68,7 +67,7 @@ Or, using the project's Makefile
 
 .. code-block:: bash
 
-    make container
+    make image
 
 Run the service
 ^^^^^^^^^^^^^^^
@@ -94,11 +93,3 @@ Or, using the project's Makefile
 .. code-block:: bash
 
     make compose
-
-Known Issues
-============
-
-Backend issues if a single user hits submit multiple times.
-  - "raise RuntimeError("Response content longer than Content-Length")"
-
-Should probably build in some websocket Acking during broadcast.
