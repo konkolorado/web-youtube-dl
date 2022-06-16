@@ -7,14 +7,14 @@ import websockets
 import websockets.exceptions
 from fastapi import WebSocket
 
-from . import progress, youtube
+from . import metadata, progress, youtube
 
 logger = logging.getLogger(__name__)
 
 
 class WebsocketsManager:
-    def __init__(self, qs: progress.ProgressQueues) -> None:
-        self.queues = qs
+    def __init__(self, pqs: progress.ProgressQueues) -> None:
+        self.queues = pqs
         self.subscriptions: dict[str, list[WebSocket]] = defaultdict(list)
 
     async def subscribe(self, websocket: WebSocket) -> str:

@@ -93,3 +93,9 @@ Or, using the project's Makefile
 .. code-block:: bash
 
     make compose
+
+Enhancements
+^^^^^^^^^^^^
+Track progress beyond YT download
+- tie into ffmpeg
+- tie into metadata extraction

@@ -15,8 +15,9 @@ class ProgressQueues:
     def track(self, filename: str):
         global _queues
         filepath = Path(filename)
-        _queues[filepath.stem] = janus.Queue()
-        logger.debug(f"Tracking {filename} download as {filepath.stem}")
+        if filepath.stem not in _queues:
+            _queues[filepath.stem] = janus.Queue()
+            logger.debug(f"Tracking {filename} download as {filepath.stem}")
 
     def put(self, filename: str, value: float):
         filepath = Path(filename)

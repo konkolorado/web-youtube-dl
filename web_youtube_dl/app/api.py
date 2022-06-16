@@ -4,11 +4,14 @@ import logging
 from fastapi import APIRouter
 from pydantic import BaseModel, HttpUrl
 
-from web_youtube_dl.services import progress, youtube
+from web_youtube_dl.services import metadata, progress, youtube
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+queues = progress.ProgressQueues()
+mm = metadata.MetadataManager()
+dlm = youtube.DownloadManager()
 
 
 class DownloadRequest(BaseModel):
@@ -25,13 +28,11 @@ class DownloadResponse(BaseModel):
     response_model=DownloadResponse,
 )
 async def download(req: DownloadRequest):
-    logger.debug(f"Received download request {req}")
-    queues = progress.ProgressQueues()
-    ytd = youtube.YTDownload(req.url, queues)
+    logger.info(f"Handling download request {req}")
+    ytd = youtube.YTDownload(req.url, pqs=queues)
     queues.track(ytd.filename)
-    logger.debug(f"Tracking download for {req.url} as {ytd.filename}")
-
-    dlm = youtube.DownloadManager()
     loop = asyncio.get_running_loop()
-    filepath = await loop.run_in_executor(None, dlm.download, ytd)
+    filepath = await loop.run_in_executor(
+        None, dlm.download_and_process, ytd, mm, queues
+    )
     return {"filename": filepath.name}

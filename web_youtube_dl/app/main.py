@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from web_youtube_dl.app import api, views
 from web_youtube_dl.app.utils import MediaStaticFiles
 from web_youtube_dl.config import get_app_port, get_download_path, init_logging
-from web_youtube_dl.services import youtube
+from web_youtube_dl.services import metadata, youtube
 
 app = FastAPI()
 app.include_router(api.router)
@@ -38,7 +38,8 @@ def cli_download():
     url = sys.argv[1]
     ytd = youtube.YTDownload(url)
     dlm = youtube.DownloadManager()
-    dlm.download(ytd)
+    mm = metadata.MetadataManager()
+    dlm.download_and_process(ytd, mm)
 
 
 if __name__ == "__main__":
