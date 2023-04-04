@@ -27,7 +27,7 @@ class ProgressQueues:
     def terminate(self, filename: str):
         filepath = Path(filename)
         _queues[filepath.stem].sync_q.put(self.QUEUE_SENTINAL)
-        # _queues.pop(filepath.stem)
+        # _queues.pop(filepath.stem) # noqa
         logger.debug(f"Terminated {filename} download as {filepath.stem}")
 
     async def get(self, filename) -> float:

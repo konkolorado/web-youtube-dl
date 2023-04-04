@@ -26,19 +26,26 @@ ffmpeg-python = "^0.2.0"
 musicbrainzngs = "^0.7.1"
 mutagen = "^1.45.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
 mypy = "^0.960"
 pytest-cov = "^2.10.1"
 black = "^22.3.0"
-isort = "^5.10.1"
 types-setuptools = "^57.4.17"
 types-requests = "^2.27.30"
 requests = "^2.28.0"
+ruff = "^0.0.260"
 
-[tool.isort]
-profile = "black"
-src_paths = ["web_youtube_dl", "tests"]
+[tool.ruff]
+select = [
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "UP",  # pyupgrade
+  "ERA"  # eradicate
+]
+
+[tool.ruff.isort]
+known-first-party = ["web_youtube_dl", "tests"]
 
 [tool.poetry.scripts]
 web-youtube-dl-cli = "web_youtube_dl.app.main:cli_download"

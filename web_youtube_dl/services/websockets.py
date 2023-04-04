@@ -7,7 +7,7 @@ import websockets
 import websockets.exceptions
 from fastapi import WebSocket
 
-from . import metadata, progress, youtube
+from . import progress, youtube
 
 logger = logging.getLogger(__name__)
 

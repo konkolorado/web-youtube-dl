@@ -101,8 +101,3 @@ class DownloadManager:
         new_file.rename(filepath)
         logger.info(f"Converted {str(filepath)} to mp3")
         return filepath
-
-
-if __name__ == "__main__":
-    s = "http://youtube.com/watch?v=2lAe1cqCOXo"
-    # download(s)
