@@ -10,9 +10,16 @@ classifiers = [
     "Topic :: Multimedia :: Sound/Audio :: Capture/Recording",
 ]
 
+[tool.poetry.scripts]
+web-youtube-dl-cli = "web_youtube_dl.app.main:cli_download"
+web-youtube-dl-web = "web_youtube_dl.app.main:run_app"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
 fastapi = "^0"
 uvicorn = "^0.17.0"
 python-multipart = "^0.0.5"
@@ -46,12 +53,3 @@ select = [
 
 [tool.ruff.isort]
 known-first-party = ["web_youtube_dl", "tests"]
-
-[tool.poetry.scripts]
-web-youtube-dl-cli = "web_youtube_dl.app.main:cli_download"
-web-youtube-dl-web = "web_youtube_dl.app.main:run_app"
-
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-
