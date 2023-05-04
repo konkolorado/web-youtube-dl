@@ -128,10 +128,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-downloads/
-
 # VSCode settings
 .vscode
 
 # Mac stuff
 .DS_Store
+
+# Custom
+downloads/
+.ruff_cache
