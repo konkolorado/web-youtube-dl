@@ -1,22 +1,25 @@
+import asyncio
+from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
 
 from web_youtube_dl.app import api, views
-from web_youtube_dl.app.utils import MediaStaticFiles
-from web_youtube_dl.config import get_app_port, get_download_path, init_logging
+from web_youtube_dl.config import get_app_port, init_logging
+from web_youtube_dl.db import create_db
 from web_youtube_dl.services import metadata, youtube
 
-app = FastAPI()
-app.include_router(api.router)
-app.include_router(views.router)
-app.mount(
-    "/download", MediaStaticFiles(directory=get_download_path()), name="downloads"
-)
 
-
-@app.on_event("startup")
-async def setup_logging():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     init_logging()
+    await create_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+app.include_router(api.router, prefix="/api")
+app.include_router(views.router)
 
 
 def run_app():
@@ -25,21 +28,27 @@ def run_app():
         host="0.0.0.0",
         port=get_app_port(),
         log_level="debug",
-        reload=False,
+        reload=True,
     )
 
 
-def cli_download():
+async def _cli_download():
+    # TODO: run API in a thread and call it
     import os
     import sys
+    import uuid
 
     if "YT_DOWNLOAD_PATH" not in os.environ:
         os.environ["YT_DOWNLOAD_PATH"] = "."
     url = sys.argv[1]
-    ytd = youtube.YTDownload(url)
-    dlm = youtube.DownloadManager()
+    ytd = youtube.YTDownload(url=url, request_id=uuid.uuid4())
+    dlm = youtube.DownloadManager(ytd)
     mm = metadata.MetadataManager()
-    dlm.download_and_process(ytd, mm)
+    await dlm.download_and_process(mm)
+
+
+def cli_download():
+    asyncio.run(_cli_download())
 
 
 if __name__ == "__main__":
