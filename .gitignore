@@ -137,3 +137,5 @@ dmypy.json
 # Custom
 downloads/
 .ruff_cache
+.envrc
+music.db
