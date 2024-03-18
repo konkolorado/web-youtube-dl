@@ -26,7 +26,7 @@ async def _download(id: uuid.UUID):
             if download is None or download.audio is None:
                 ytd = youtube.YTDownload(req.download_url, id)
                 await youtube.DownloadManager(ytd).download_and_process(
-                    metadata.MetadataManager()
+                    metadata.MetadataManager(), requests
                 )
             else:
                 await requests.complete_request(req)
