@@ -3,6 +3,8 @@ services:
 
   web-youtube-dl:
     image: web-youtube-dl:latest
+    build:
+      context: .
     ports:
       - target: "${YT_DOWNLOAD_PORT:-5000}"
         published: "${YT_DOWNLOAD_PORT:-5000}"

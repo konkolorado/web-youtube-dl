@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.11-alpine
 ENV PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     POETRY_VIRTUALENVS_CREATE=false
@@ -16,7 +16,7 @@ ENV PATH="${PATH}:/root/.local/bin/"
 
 WORKDIR /app
 COPY poetry.lock pyproject.toml README.rst ./
-RUN poetry install --no-dev
+RUN poetry install --only=server
 
 ADD --chown=1001 web_youtube_dl web_youtube_dl
 RUN poetry build --format wheel && pip install dist/*.whl
