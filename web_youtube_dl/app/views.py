@@ -41,7 +41,6 @@ async def start(
 
 @router.get("/progress/{request_id}", response_class=HTMLResponse)
 async def progress(request: Request, request_id: uuid.UUID):
-    # TODO - this is slow, probably deadlocking
     async with get_session() as session:
         download = await get_download_request_or_404(session, request_id)
 

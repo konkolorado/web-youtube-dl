@@ -6,13 +6,11 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession as AsyncSession_
 
+from web_youtube_dl.config import get_database_path
+
 logger = logging.getLogger(__name__)
 
-
-DATABASE_URL = "sqlite+aiosqlite:///music.db"
-# engine = create_async_engine(DATABASE_URL, echo=True)
-engine = create_async_engine(DATABASE_URL)
-
+engine = create_async_engine(get_database_path())
 async_session = async_sessionmaker(engine, class_=AsyncSession_, expire_on_commit=False)
 
 

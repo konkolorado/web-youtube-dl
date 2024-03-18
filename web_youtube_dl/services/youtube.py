@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import logging
 import tempfile
+import typing as t
 import uuid
-from functools import cached_property
+from functools import cached_property, partial
 from pathlib import Path
 
 import ffmpeg
+from anyio import to_thread
+from anyio.from_thread import start_blocking_portal
 from pytube import Stream, YouTube
 
 from web_youtube_dl.config import get_download_path
@@ -30,28 +33,38 @@ class YTDownload:
             raise Exception("Unable to find stream")
         return stream
 
-    def _show_progress(self, s: Stream, _: bytes, remaining_b: int):
-        # TODO: use this to update the DB
-        logger.debug(f"Progress callback called for {self.url}: {remaining_b=}")
-        percentage_complete = remaining_b / s.filesize
-        self.pqs.put(s.default_filename, percentage_complete)  # type: ignore
-
-    def _show_complete(self, s: Stream, filepath: str):
-        logger.debug(f"Complete callback called for {self.url}: {filepath=}")
-        self.pqs.terminate(self.filename)  # type: ignore
-
 
 class DownloadManager:
     def __init__(self, ytd: YTDownload):
         self.ytd = ytd
+        on_progress_callback = partial(self.sync_callback, self._progress_callback)
+        self.ytd.yt.register_on_progress_callback(on_progress_callback)
+        on_complete_callback = partial(self.sync_callback, self._completion_callback)
+        self.ytd.yt.register_on_complete_callback(on_complete_callback)
 
-    async def download_and_process(self, mm: MetadataManager):
-        # TODO: make this thing async
+    def sync_callback(self, callback, *args, **kwargs):
+        with start_blocking_portal() as portal:
+            portal.call(callback, *args, **kwargs)
+
+    async def _progress_callback(self, s: Stream, _: bytes, remaining_b: int):
+        percentage_complete = int(remaining_b / s.filesize * 100)
+        async with get_session() as session:
+            requests = RequestRepo(session)
+            await requests.update_downloading_request(
+                self.ytd.req_id, percentage_complete
+            )
+
+    async def _completion_callback(self, _: t.Any, filepath: str | None):
+        async with get_session() as session:
+            requests = RequestRepo(session)
+            await requests.complete_downloading_request(self.ytd.req_id)
+
+    async def download_and_process(self, mm: MetadataManager, db: RequestRepo):
         with tempfile.NamedTemporaryFile() as fp:
-            filepath = self.download(fp.name)
-            self.convert_to_mp3(filepath)
-            self.apply_metadata(mm, filepath)
-            await self.store_to_db(filepath)
+            filepath = await to_thread.run_sync(self.download, fp.name)
+            await to_thread.run_sync(self.convert_to_mp3, filepath)
+            await to_thread.run_sync(self.apply_metadata, mm, filepath)
+            await self.store_to_db(db, filepath)
 
     def download(self, filename: str) -> Path:
         stream = self.ytd.stream
@@ -78,12 +91,10 @@ class DownloadManager:
             mm.apply_metadata(metadata, str(filepath))
             logger.info(f"Applied metadata to {str(filepath)}")
 
-    async def store_to_db(self, filepath: Path):
+    async def store_to_db(self, db: RequestRepo, filepath: Path):
         with filepath.open("rb") as f:
             data = f.read()
 
-        async with get_session() as session:
-            rrepo = RequestRepo(session)
-            if (request := await rrepo.get_request(self.ytd.req_id)) is None:
-                return
-            await rrepo.complete_request(request, data)
+        if (request := await db.get_request(self.ytd.req_id)) is None:
+            return
+        await db.complete_request(request, data)

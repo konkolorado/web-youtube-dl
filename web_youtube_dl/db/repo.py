@@ -4,7 +4,7 @@ import uuid
 import arrow
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from .models import Download, Request
+from .models import Download, Request, RequestStatus
 
 
 class RequestRepo:
@@ -17,7 +17,9 @@ class RequestRepo:
             request = Request(download=download, download_url=url)
         else:
             download = await drepo.create_download(url)
-            request = Request(download=download, download_url=url)
+            request = Request(
+                download=download, download_url=url, status=RequestStatus.PENDING
+            )
         self.session.add(request)
         await self.session.commit()
         await self.session.refresh(request)
@@ -31,6 +33,22 @@ class RequestRepo:
             request.download.audio = audio
         request.completed_at = arrow.utcnow()
         request.progress = 100
+        request.status = RequestStatus.COMPLETED
+        self.session.add(request)
+        await self.session.commit()
+
+    async def update_downloading_request(self, id: uuid.UUID, progress: int):
+        request = await self.get_request(id)
+        assert request
+        request.progress = progress
+        request.status = RequestStatus.DOWNLOADING
+        self.session.add(request)
+        await self.session.commit()
+
+    async def complete_downloading_request(self, id: uuid.UUID):
+        request = await self.get_request(id)
+        assert request
+        request.progress = 99
         self.session.add(request)
         await self.session.commit()
 

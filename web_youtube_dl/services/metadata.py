@@ -41,6 +41,7 @@ class MetadataManager:
         if "cover" not in s.lower():
             s = f"{s} NOT cover"
 
+        # TODO - handle errors here, handle more errors everywhere
         result = musicbrainzngs.search_recordings(s, limit=5)
         if len(result["recording-list"]) == 0:
             return None
